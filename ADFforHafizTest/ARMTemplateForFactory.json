@@ -1,0 +1,1731 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFforHafizTest"
+		},
+		"AFGNutritonDBconnection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AFGNutritonDBconnection'"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"DLkStoragelink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DLkStoragelink'"
+		},
+		"Linkedstoragreaccount_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Linkedstoragreaccount'"
+		},
+		"Nutrition_DB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Nutrition_DB'"
+		},
+		"SQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQLDB'"
+		},
+		"Synapseanalysitlinke_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Synapseanalysitlinke'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=https://dlkstorageaccount.dfs.core.windows.net;Initial Catalog=synapseDBtest"
+		},
+		"azureBlockforSSIStest_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azureBlockforSSIStest'"
+		},
+		"azuressisirlink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'azuressisirlink'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"DLkStoragelink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"Linkedstoragreaccount_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"azuressisirlink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "hafiz.database.windows.net"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "sqladminuser"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyBaghlan')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copydata",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Badghis",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "NutritionDB",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-24T12:57:40Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Badghis')]",
+				"[concat(variables('factoryId'), '/datasets/NutritionDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PipelineAzureSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "IngestDataIntoADLS",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "customers",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/customers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RunNIStransfer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DFNIS1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CommonNISDF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"FetchNISData": {},
+									"TestTableCommonSAM": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-21T14:14:42Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CommonNISDF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SSISRPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteSSISIR",
+						"type": "ExecuteSSISPackage",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"packageLocation": {
+								"packagePath": "LiftandShiftSSISPackage/liftshiftnutrition/Exc_SQLtask.dtsx",
+								"type": "SSISDB"
+							},
+							"environmentPath": null,
+							"connectVia": {
+								"referenceName": "AzureSSISIR",
+								"type": "IntegrationRuntimeReference"
+							},
+							"loggingLevel": "Basic",
+							"projectConnectionManagers": {},
+							"packageConnectionManagers": {}
+						}
+					},
+					{
+						"name": "ssispackage2",
+						"type": "ExecuteSSISPackage",
+						"dependsOn": [
+							{
+								"activity": "ExecuteSSISIR",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"packageLocation": {
+								"packagePath": "LiftandShiftSSISPackage/liftshiftnutrition/Exc_DFTask.dtsx",
+								"type": "SSISDB"
+							},
+							"environmentPath": null,
+							"connectVia": {
+								"referenceName": "AzureSSISIR",
+								"type": "IntegrationRuntimeReference"
+							},
+							"loggingLevel": "Basic",
+							"projectConnectionManagers": {},
+							"packageConnectionManagers": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-28T14:02:53Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AzureSSISIR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TransferHFs')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "TransferFaciliteis",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Dataflowcombine",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"ddbadghis": {},
+									"dfbaghlan": {},
+									"dfbalkh": {},
+									"sendtoserver": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-21T15:18:54Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Dataflowcombine')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Inputpointer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Outputdataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-25T12:39:14Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Inputpointer')]",
+				"[concat(variables('factoryId'), '/datasets/Outputdataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AFGNUTRITIONDW')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AFGNutritonDBconnection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "HFsAll"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AFGNutritonDBconnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NameStyle",
+						"type": "bit"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Suffix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CompanyName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesPerson",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PasswordHash",
+						"type": "varchar"
+					},
+					{
+						"name": "PasswordSalt",
+						"type": "varchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Badghis')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AFGNutritonDBconnection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "FacilityID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacTypeCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacilityName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Facility Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ActiveStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Total",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Badghis"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AFGNutritonDBconnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Baghlan')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AFGNutritonDBconnection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "FacilityID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacTypeCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacilityName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Facility Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ActiveStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Total",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Baghlan"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AFGNutritonDBconnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Balkh')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AFGNutritonDBconnection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "FacilityID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacTypeCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacilityName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Facility Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ActiveStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Total",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Balkh"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AFGNutritonDBconnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Inputpointer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linkedstoragreaccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ChildCategories.txt",
+						"folderPath": "input",
+						"fileSystem": "adfdemo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linkedstoragreaccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NSSIMport')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Nutrition_DB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FacilityID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FacilityNameDari",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FacilityName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TypeAbbrv",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DistrictCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "District",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DistNameDari",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProvinceCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Province",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProvinceNameDari",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Village",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Chwname",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Chwcode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Year",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Month",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ChildId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Childname",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Childcode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Agecategory",
+						"type": "varchar"
+					},
+					{
+						"name": "Gender",
+						"type": "varchar"
+					},
+					{
+						"name": "Childfathername",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Muacsize",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Hasswelling",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Genderdari",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Muacstatus",
+						"type": "varchar"
+					},
+					{
+						"name": "Hasswellingdari",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Monthyear",
+						"type": "date"
+					},
+					{
+						"name": "Username",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Nssmonthid",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Totalnormal",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Totalmoderate",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Totalsevere",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Totalmissing",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "common_nss"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Nutrition_DB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NutritionDB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Nutrition_DB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Balkh"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Nutrition_DB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Outputdataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linkedstoragreaccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "data.txt",
+						"folderPath": "output",
+						"fileSystem": "adfdemo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linkedstoragreaccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azuresqllinkhmisidpsam')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "hmisipdsam"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "customers.csv",
+						"folderPath": "output",
+						"fileSystem": "adfdemo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/hmis')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linkedstoragreaccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "HMIS.csv",
+						"folderPath": "output",
+						"fileSystem": "adfdemo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ProvinceID",
+						"type": "String"
+					},
+					{
+						"name": "Province",
+						"type": "String"
+					},
+					{
+						"name": "HMISLowBirthWeightNewCases",
+						"type": "String"
+					},
+					{
+						"name": "HMISMAMUnder5NewCasesFemale",
+						"type": "String"
+					},
+					{
+						"name": "HMISMAMUnder5NewCasesMale",
+						"type": "String"
+					},
+					{
+						"name": "HMISNewAnemiaOver5Female",
+						"type": "String"
+					},
+					{
+						"name": "HMISNewbornAliveNewCases",
+						"type": "String"
+					},
+					{
+						"name": "HMISNomalUnder5NewCasesFemale",
+						"type": "String"
+					},
+					{
+						"name": "HMISNomalUnder5NewCasesMale",
+						"type": "String"
+					},
+					{
+						"name": "HMISPatientsOver5Female",
+						"type": "String"
+					},
+					{
+						"name": "HMISPatientsUnder5NewCasesMale",
+						"type": "String"
+					},
+					{
+						"name": "HMISPatientsUnder5NewCasesFemale",
+						"type": "String"
+					},
+					{
+						"name": "HMISSAMUnder5NewCasesFemale",
+						"type": "String"
+					},
+					{
+						"name": "HMISSAMUnder5NewCasesMale",
+						"type": "String"
+					},
+					{
+						"name": "awdunder5female",
+						"type": "String"
+					},
+					{
+						"name": "awdunder5male",
+						"type": "String"
+					},
+					{
+						"name": "coughcoldunder5female",
+						"type": "String"
+					},
+					{
+						"name": "coughcoldunder5male",
+						"type": "String"
+					},
+					{
+						"name": "entunder5female",
+						"type": "String"
+					},
+					{
+						"name": "entunder5male",
+						"type": "String"
+					},
+					{
+						"name": "pneumoniaunder5female",
+						"type": "String"
+					},
+					{
+						"name": "pneumoniaunder5male",
+						"type": "String"
+					},
+					{
+						"name": "Under2growthmonitoing",
+						"type": "String"
+					},
+					{
+						"name": "mmsanc1",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linkedstoragreaccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ipdsam')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Linkedstoragreaccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "IPDSAM.csv",
+						"folderPath": "output",
+						"fileSystem": "adfdemo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Linkedstoragreaccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AFGNutritonDBconnection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('AFGNutritonDBconnection_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DLkStoragelink')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('DLkStoragelink_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('DLkStoragelink_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Linkedstoragreaccount')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('Linkedstoragreaccount_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('Linkedstoragreaccount_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Nutrition_DB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Nutrition_DB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQLDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('SQLDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Synapseanalysitlinke')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('Synapseanalysitlinke_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azureBlockforSSIStest')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('azureBlockforSSIStest_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azuressisirlink')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('azuressisirlink_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('azuressisirlink_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSSISIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "this is my ssis ir for azure",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US",
+						"nodeSize": "Standard_D8_v3",
+						"numberOfNodes": 1,
+						"maxParallelExecutionsPerNode": 1
+					},
+					"ssisProperties": {
+						"catalogInfo": {
+							"catalogServerEndpoint": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]",
+							"catalogAdminUserName": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]",
+							"catalogAdminPassword": {
+								"type": "SecureString",
+								"value": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+							},
+							"catalogPricingTier": "S1"
+						},
+						"edition": "Standard",
+						"licenseType": "LicenseIncluded",
+						"dataProxyProperties": {
+							"connectVia": {
+								"type": "IntegrationRuntimeReference",
+								"referenceName": "integrationRuntimeLocal"
+							},
+							"stagingLinkedService": {
+								"type": "LinkedServiceReference",
+								"referenceName": "azureBlockforSSIStest"
+							},
+							"path": "ssisir"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeLocal')]",
+				"[concat(variables('factoryId'), '/linkedServices/azureBlockforSSIStest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeLocal')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CommonNISDF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "NSSIMport",
+								"type": "DatasetReference"
+							},
+							"name": "FetchNISData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AFGNUTRITIONDW",
+								"type": "DatasetReference"
+							},
+							"name": "TestTableCommonSAM"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Selectcolumns"
+						},
+						{
+							"name": "FilterSevereonly"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Id as integer,",
+						"          FacilityID as integer,",
+						"          FacilityNameDari as string,",
+						"          FacilityName as string,",
+						"          TypeAbbrv as string,",
+						"          DistrictCode as string,",
+						"          District as string,",
+						"          DistNameDari as string,",
+						"          ProvinceCode as string,",
+						"          Province as string,",
+						"          ProvinceNameDari as string,",
+						"          Village as string,",
+						"          Chwname as string,",
+						"          Chwcode as string,",
+						"          Year as integer,",
+						"          Month as integer,",
+						"          ChildId as integer,",
+						"          Childname as string,",
+						"          Childcode as integer,",
+						"          Age as integer,",
+						"          Agecategory as string,",
+						"          Gender as string,",
+						"          Childfathername as string,",
+						"          Muacsize as integer,",
+						"          Hasswelling as string,",
+						"          Genderdari as string,",
+						"          Muacstatus as string,",
+						"          Hasswellingdari as string,",
+						"          Monthyear as date,",
+						"          Username as string,",
+						"          Nssmonthid as integer,",
+						"          Totalnormal as integer,",
+						"          Totalmoderate as integer,",
+						"          Totalsevere as integer,",
+						"          Totalmissing as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> FetchNISData",
+						"FetchNISData select(mapColumn(",
+						"          FacilityID,",
+						"          Province,",
+						"          Year,",
+						"          Month,",
+						"          Agecategory,",
+						"          Gender,",
+						"          Totalsevere",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Selectcolumns",
+						"Selectcolumns filter(greater(Totalsevere, 0)) ~> FilterSevereonly",
+						"FilterSevereonly sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> TestTableCommonSAM"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/NSSIMport')]",
+				"[concat(variables('factoryId'), '/datasets/AFGNUTRITIONDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dataflowcombine')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Badghis",
+								"type": "DatasetReference"
+							},
+							"name": "ddbadghis"
+						},
+						{
+							"dataset": {
+								"referenceName": "Baghlan",
+								"type": "DatasetReference"
+							},
+							"name": "dfbaghlan"
+						},
+						{
+							"dataset": {
+								"referenceName": "Balkh",
+								"type": "DatasetReference"
+							},
+							"name": "dfbalkh"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AFGNUTRITIONDW",
+								"type": "DatasetReference"
+							},
+							"name": "sendtoserver"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AllFaciliteis"
+						},
+						{
+							"name": "allFacilities"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          FacilityID as string,",
+						"          FacTypeCode as string,",
+						"          FacilityName as string,",
+						"          {Facility Type} as string,",
+						"          District as string,",
+						"          ActiveStatus as string,",
+						"          Total as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> ddbadghis",
+						"source(output(",
+						"          FacilityID as string,",
+						"          FacTypeCode as string,",
+						"          FacilityName as string,",
+						"          {Facility Type} as string,",
+						"          District as string,",
+						"          ActiveStatus as string,",
+						"          Total as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> dfbaghlan",
+						"source(output(",
+						"          FacilityID as string,",
+						"          FacTypeCode as string,",
+						"          FacilityName as string,",
+						"          {Facility Type} as string,",
+						"          District as string,",
+						"          ActiveStatus as string,",
+						"          Total as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> dfbalkh",
+						"dfbaghlan, ddbadghis, dfbalkh union(byName: false)~> AllFaciliteis",
+						"AllFaciliteis select(mapColumn(",
+						"          FacilityID,",
+						"          FacTypeCode,",
+						"          FacilityName,",
+						"          {Facility Type},",
+						"          District,",
+						"          ActiveStatus,",
+						"          Total",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> allFacilities",
+						"allFacilities sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sendtoserver"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Badghis')]",
+				"[concat(variables('factoryId'), '/datasets/Baghlan')]",
+				"[concat(variables('factoryId'), '/datasets/Balkh')]",
+				"[concat(variables('factoryId'), '/datasets/AFGNUTRITIONDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Joinhmisipdsam')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "hmis",
+								"type": "DatasetReference"
+							},
+							"name": "dshmis"
+						},
+						{
+							"dataset": {
+								"referenceName": "ipdsam",
+								"type": "DatasetReference"
+							},
+							"name": "dsipdsam"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "azuresqllinkhmisidpsam",
+								"type": "DatasetReference"
+							},
+							"name": "sinktosynapse"
+						}
+					],
+					"transformations": [
+						{
+							"name": "InnerJoinHMISipdsam"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ProvinceID as string,",
+						"          Province as string,",
+						"          HMISLowBirthWeightNewCases as string,",
+						"          HMISMAMUnder5NewCasesFemale as string,",
+						"          HMISMAMUnder5NewCasesMale as string,",
+						"          HMISNewAnemiaOver5Female as string,",
+						"          HMISNewbornAliveNewCases as string,",
+						"          HMISNomalUnder5NewCasesFemale as string,",
+						"          HMISNomalUnder5NewCasesMale as string,",
+						"          HMISPatientsOver5Female as string,",
+						"          HMISPatientsUnder5NewCasesMale as string,",
+						"          HMISPatientsUnder5NewCasesFemale as string,",
+						"          HMISSAMUnder5NewCasesFemale as string,",
+						"          HMISSAMUnder5NewCasesMale as string,",
+						"          awdunder5female as string,",
+						"          awdunder5male as string,",
+						"          coughcoldunder5female as string,",
+						"          coughcoldunder5male as string,",
+						"          entunder5female as string,",
+						"          entunder5male as string,",
+						"          pneumoniaunder5female as string,",
+						"          pneumoniaunder5male as string,",
+						"          Under2growthmonitoing as string,",
+						"          mmsanc1 as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> dshmis",
+						"source(output(",
+						"          ProvinceID as string,",
+						"          Province as string,",
+						"          TotalIPDSAM as string,",
+						"          Male as string,",
+						"          Female as string,",
+						"          Cured as string,",
+						"          Deaths as string,",
+						"          Defaulters as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> dsipdsam",
+						"dshmis, dsipdsam join(dshmis@ProvinceID == dsipdsam@ProvinceID",
+						"     && dshmis@Province == dsipdsam@Province,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> InnerJoinHMISipdsam",
+						"InnerJoinHMISipdsam sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sinktosynapse"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/hmis')]",
+				"[concat(variables('factoryId'), '/datasets/ipdsam')]",
+				"[concat(variables('factoryId'), '/datasets/azuresqllinkhmisidpsam')]"
+			]
+		}
+	]
+}

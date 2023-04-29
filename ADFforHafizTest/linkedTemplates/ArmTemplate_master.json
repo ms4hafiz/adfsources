@@ -1,0 +1,174 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFforHafizTest"
+		},
+		"AFGNutritonDBconnection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AFGNutritonDBconnection'"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"DLkStoragelink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DLkStoragelink'"
+		},
+		"Linkedstoragreaccount_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'Linkedstoragreaccount'"
+		},
+		"Nutrition_DB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Nutrition_DB'"
+		},
+		"SQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQLDB'"
+		},
+		"Synapseanalysitlinke_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Synapseanalysitlinke'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=https://dlkstorageaccount.dfs.core.windows.net;Initial Catalog=synapseDBtest"
+		},
+		"azureBlockforSSIStest_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azureBlockforSSIStest'"
+		},
+		"azuressisirlink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'azuressisirlink'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"DLkStoragelink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"Linkedstoragreaccount_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"azuressisirlink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://demo001203.dfs.core.windows.net/"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "hafiz.database.windows.net"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "sqladminuser"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ADFforHafizTest_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AFGNutritonDBconnection_connectionString": {
+						"value": "[parameters('AFGNutritonDBconnection_connectionString')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"DLkStoragelink_accountKey": {
+						"value": "[parameters('DLkStoragelink_accountKey')]"
+					},
+					"Linkedstoragreaccount_accountKey": {
+						"value": "[parameters('Linkedstoragreaccount_accountKey')]"
+					},
+					"Nutrition_DB_connectionString": {
+						"value": "[parameters('Nutrition_DB_connectionString')]"
+					},
+					"SQLDB_connectionString": {
+						"value": "[parameters('SQLDB_connectionString')]"
+					},
+					"Synapseanalysitlinke_connectionString": {
+						"value": "[parameters('Synapseanalysitlinke_connectionString')]"
+					},
+					"azureBlockforSSIStest_connectionString": {
+						"value": "[parameters('azureBlockforSSIStest_connectionString')]"
+					},
+					"azuressisirlink_accountKey": {
+						"value": "[parameters('azuressisirlink_accountKey')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"DLkStoragelink_properties_typeProperties_url": {
+						"value": "[parameters('DLkStoragelink_properties_typeProperties_url')]"
+					},
+					"Linkedstoragreaccount_properties_typeProperties_url": {
+						"value": "[parameters('Linkedstoragreaccount_properties_typeProperties_url')]"
+					},
+					"azuressisirlink_properties_typeProperties_url": {
+						"value": "[parameters('azuressisirlink_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ADFforHafizTest_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+						"value": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
+					},
+					"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+						"value": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]"
+					},
+					"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+						"value": "[parameters('AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ADFforHafizTest_ArmTemplate_0')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADFforHafizTest"
+		},
+		"AFGNutritonDBconnection_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"DLkStoragelink_accountKey": {
+			"value": ""
+		},
+		"Linkedstoragreaccount_accountKey": {
+			"value": ""
+		},
+		"Nutrition_DB_connectionString": {
+			"value": ""
+		},
+		"SQLDB_connectionString": {
+			"value": ""
+		},
+		"Synapseanalysitlinke_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=https://dlkstorageaccount.dfs.core.windows.net;Initial Catalog=synapseDBtest"
+		},
+		"azureBlockforSSIStest_connectionString": {
+			"value": ""
+		},
+		"azuressisirlink_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://demo001203.dfs.core.windows.net/"
+		},
+		"DLkStoragelink_properties_typeProperties_url": {
+			"value": "https://demo001203.dfs.core.windows.net/"
+		},
+		"Linkedstoragreaccount_properties_typeProperties_url": {
+			"value": "https://demo001203.dfs.core.windows.net/"
+		},
+		"azuressisirlink_properties_typeProperties_url": {
+			"value": "https://demo001203.dfs.core.windows.net/"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "hafiz.database.windows.net"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "sqladminuser"
+		},
+		"AzureSSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
+		}
+	}
+}
