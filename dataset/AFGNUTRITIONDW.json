@@ -1,0 +1,17 @@
+{
+	"name": "AFGNUTRITIONDW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AFGNutritonDBconnection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "HFsAll"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

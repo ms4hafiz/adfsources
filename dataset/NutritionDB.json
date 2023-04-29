@@ -1,0 +1,17 @@
+{
+	"name": "NutritionDB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Nutrition_DB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Balkh"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

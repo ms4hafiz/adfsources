@@ -1,0 +1,39 @@
+{
+	"name": "AzureSSISIR",
+	"properties": {
+		"type": "Managed",
+		"description": "this is my ssis ir for azure",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"nodeSize": "Standard_D8_v3",
+				"numberOfNodes": 1,
+				"maxParallelExecutionsPerNode": 1
+			},
+			"ssisProperties": {
+				"catalogInfo": {
+					"catalogServerEndpoint": "hafiz.database.windows.net",
+					"catalogAdminUserName": "sqladminuser",
+					"catalogAdminPassword": {
+						"type": "SecureString",
+						"value": "**********"
+					},
+					"catalogPricingTier": "S1"
+				},
+				"edition": "Standard",
+				"licenseType": "LicenseIncluded",
+				"dataProxyProperties": {
+					"connectVia": {
+						"type": "IntegrationRuntimeReference",
+						"referenceName": "integrationRuntimeLocal"
+					},
+					"stagingLinkedService": {
+						"type": "LinkedServiceReference",
+						"referenceName": "azureBlockforSSIStest"
+					},
+					"path": "ssisir"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,110 @@
+{
+	"name": "Dataflowcombine",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Badghis",
+						"type": "DatasetReference"
+					},
+					"name": "ddbadghis"
+				},
+				{
+					"dataset": {
+						"referenceName": "Baghlan",
+						"type": "DatasetReference"
+					},
+					"name": "dfbaghlan"
+				},
+				{
+					"dataset": {
+						"referenceName": "Balkh",
+						"type": "DatasetReference"
+					},
+					"name": "dfbalkh"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AFGNUTRITIONDW",
+						"type": "DatasetReference"
+					},
+					"name": "sendtoserver"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AllFaciliteis"
+				},
+				{
+					"name": "allFacilities"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          FacilityID as string,",
+				"          FacTypeCode as string,",
+				"          FacilityName as string,",
+				"          {Facility Type} as string,",
+				"          District as string,",
+				"          ActiveStatus as string,",
+				"          Total as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ddbadghis",
+				"source(output(",
+				"          FacilityID as string,",
+				"          FacTypeCode as string,",
+				"          FacilityName as string,",
+				"          {Facility Type} as string,",
+				"          District as string,",
+				"          ActiveStatus as string,",
+				"          Total as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dfbaghlan",
+				"source(output(",
+				"          FacilityID as string,",
+				"          FacTypeCode as string,",
+				"          FacilityName as string,",
+				"          {Facility Type} as string,",
+				"          District as string,",
+				"          ActiveStatus as string,",
+				"          Total as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dfbalkh",
+				"dfbaghlan, ddbadghis, dfbalkh union(byName: false)~> AllFaciliteis",
+				"AllFaciliteis select(mapColumn(",
+				"          FacilityID,",
+				"          FacTypeCode,",
+				"          FacilityName,",
+				"          {Facility Type},",
+				"          District,",
+				"          ActiveStatus,",
+				"          Total",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> allFacilities",
+				"allFacilities sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sendtoserver"
+			]
+		}
+	}
+}

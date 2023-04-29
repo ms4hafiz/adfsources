@@ -1,0 +1,171 @@
+{
+	"name": "NSSIMport",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Nutrition_DB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FacilityID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FacilityNameDari",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FacilityName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TypeAbbrv",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DistrictCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "District",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DistNameDari",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProvinceCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Province",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProvinceNameDari",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Village",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Chwname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Chwcode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Year",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Month",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ChildId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Childname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Childcode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Age",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Agecategory",
+				"type": "varchar"
+			},
+			{
+				"name": "Gender",
+				"type": "varchar"
+			},
+			{
+				"name": "Childfathername",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Muacsize",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Hasswelling",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Genderdari",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Muacstatus",
+				"type": "varchar"
+			},
+			{
+				"name": "Hasswellingdari",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Monthyear",
+				"type": "date"
+			},
+			{
+				"name": "Username",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Nssmonthid",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Totalnormal",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Totalmoderate",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Totalsevere",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Totalmissing",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "common_nss"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

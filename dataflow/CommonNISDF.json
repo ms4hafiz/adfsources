@@ -1,0 +1,98 @@
+{
+	"name": "CommonNISDF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "NSSIMport",
+						"type": "DatasetReference"
+					},
+					"name": "FetchNISData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AFGNUTRITIONDW",
+						"type": "DatasetReference"
+					},
+					"name": "TestTableCommonSAM"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Selectcolumns"
+				},
+				{
+					"name": "FilterSevereonly"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Id as integer,",
+				"          FacilityID as integer,",
+				"          FacilityNameDari as string,",
+				"          FacilityName as string,",
+				"          TypeAbbrv as string,",
+				"          DistrictCode as string,",
+				"          District as string,",
+				"          DistNameDari as string,",
+				"          ProvinceCode as string,",
+				"          Province as string,",
+				"          ProvinceNameDari as string,",
+				"          Village as string,",
+				"          Chwname as string,",
+				"          Chwcode as string,",
+				"          Year as integer,",
+				"          Month as integer,",
+				"          ChildId as integer,",
+				"          Childname as string,",
+				"          Childcode as integer,",
+				"          Age as integer,",
+				"          Agecategory as string,",
+				"          Gender as string,",
+				"          Childfathername as string,",
+				"          Muacsize as integer,",
+				"          Hasswelling as string,",
+				"          Genderdari as string,",
+				"          Muacstatus as string,",
+				"          Hasswellingdari as string,",
+				"          Monthyear as date,",
+				"          Username as string,",
+				"          Nssmonthid as integer,",
+				"          Totalnormal as integer,",
+				"          Totalmoderate as integer,",
+				"          Totalsevere as integer,",
+				"          Totalmissing as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> FetchNISData",
+				"FetchNISData select(mapColumn(",
+				"          FacilityID,",
+				"          Province,",
+				"          Year,",
+				"          Month,",
+				"          Agecategory,",
+				"          Gender,",
+				"          Totalsevere",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Selectcolumns",
+				"Selectcolumns filter(greater(Totalsevere, 0)) ~> FilterSevereonly",
+				"FilterSevereonly sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> TestTableCommonSAM"
+			]
+		}
+	}
+}

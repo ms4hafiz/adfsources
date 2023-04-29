@@ -1,0 +1,46 @@
+{
+	"name": "Baghlan",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AFGNutritonDBconnection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "FacilityID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FacTypeCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FacilityName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Facility Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "District",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ActiveStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Total",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Baghlan"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

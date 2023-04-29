@@ -1,0 +1,9 @@
+{
+	"name": "ADFforHafizTest",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "69f3dc92-e0b3-4244-b27e-7e65244868b9",
+		"tenantId": "85524025-0bed-45d8-a1e8-34ae439b2492"
+	}
+}
