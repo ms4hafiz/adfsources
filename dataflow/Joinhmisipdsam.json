@@ -19,7 +19,15 @@
 					"name": "dsipdsam"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable1",
+						"type": "DatasetReference"
+					},
+					"name": "sinktosynapse"
+				}
+			],
 			"transformations": [
 				{
 					"name": "InnerJoinHMISipdsam"
@@ -73,7 +81,19 @@
 				"     joinType:'outer',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> InnerJoinHMISipdsam"
+				"     broadcast: 'auto')~> InnerJoinHMISipdsam",
+				"InnerJoinHMISipdsam sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinktosynapse"
 			]
 		}
 	}
