@@ -21,75 +21,99 @@
 		},
 		"schema": [
 			{
+				"name": "ProvinceID",
 				"type": "String"
 			},
 			{
+				"name": "Province",
 				"type": "String"
 			},
 			{
+				"name": "HMISLowBirthWeightNewCases",
 				"type": "String"
 			},
 			{
+				"name": "HMISMAMUnder5NewCasesFemale",
 				"type": "String"
 			},
 			{
+				"name": "HMISMAMUnder5NewCasesMale",
 				"type": "String"
 			},
 			{
+				"name": "HMISNewAnemiaOver5Female",
 				"type": "String"
 			},
 			{
+				"name": "HMISNewbornAliveNewCases",
 				"type": "String"
 			},
 			{
+				"name": "HMISNomalUnder5NewCasesFemale",
 				"type": "String"
 			},
 			{
+				"name": "HMISNomalUnder5NewCasesMale",
 				"type": "String"
 			},
 			{
+				"name": "HMISPatientsOver5Female",
 				"type": "String"
 			},
 			{
+				"name": "HMISPatientsUnder5NewCasesMale",
 				"type": "String"
 			},
 			{
+				"name": "HMISPatientsUnder5NewCasesFemale",
 				"type": "String"
 			},
 			{
+				"name": "HMISSAMUnder5NewCasesFemale",
 				"type": "String"
 			},
 			{
+				"name": "HMISSAMUnder5NewCasesMale",
 				"type": "String"
 			},
 			{
+				"name": "awdunder5female",
 				"type": "String"
 			},
 			{
+				"name": "awdunder5male",
 				"type": "String"
 			},
 			{
+				"name": "coughcoldunder5female",
 				"type": "String"
 			},
 			{
+				"name": "coughcoldunder5male",
 				"type": "String"
 			},
 			{
+				"name": "entunder5female",
 				"type": "String"
 			},
 			{
+				"name": "entunder5male",
 				"type": "String"
 			},
 			{
+				"name": "pneumoniaunder5female",
 				"type": "String"
 			},
 			{
+				"name": "pneumoniaunder5male",
 				"type": "String"
 			},
 			{
+				"name": "Under2growthmonitoing",
 				"type": "String"
 			},
 			{
+				"name": "mmsanc1",
 				"type": "String"
 			}
 		]
